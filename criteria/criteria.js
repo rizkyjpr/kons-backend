@@ -51,6 +51,8 @@ const insertPerbandingan = async (data) => {
                           VALUES ('${data.nilai[i].row}', '${data.nilai[i].column}', '${data.nilai[i].value}')`)
         }
         try {
+            const reset = await client.query(`DELETE FROM perbandingan_kriteria
+            WHERE EXISTS (SELECT 1 FROM perbandingan_kriteria);`)
             for(const query of queries){
                 const result = await client.query(query)
             }
@@ -75,12 +77,11 @@ const normalisasiKriteria = async () => {
         `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
       );
       const arr2 = await q2.query(
-        `SELECT nilai FROM perbandingan_kriteria ORDER BY id_kriteria_1, id_kriteria_2`
-      );
-  
-      var count = 0;
-      var queries = [];
-      for (let i = 0; i < arr1.rowCount; i++) {
+        `SELECT nilai FROM perbandingan_kriteria ORDER BY id_kriteria_2, id_kriteria_1`
+      );      
+        var count = 0;
+        var queries = [];
+        for (let i = 0; i < arr1.rowCount; i++) {
         const temp = arr2.rows.slice(
           (count / arr1.rowCount) * arr1.rowCount,
           (count / arr1.rowCount) * arr1.rowCount + arr1.rowCount
@@ -91,8 +92,8 @@ const normalisasiKriteria = async () => {
         })
         for (let j = 0; j < arr1.rowCount; j++) {
           queries.push(
-            `UPDATE perbandingan_kriteria SET nilai_normalisasi = '${arr2.rows[j].nilai/result}'
-             WHERE id_kriteria_1 = '${arr1.rows[i].id_kriteria_1}' AND id_kriteria_2 = '${arr1.rows[j].id_kriteria_1}'`
+            `UPDATE perbandingan_kriteria SET nilai_normalisasi = '${arr2.rows[j+i*arr1.rowCount].nilai/result}'
+             WHERE id_kriteria_1 = '${arr1.rows[j].id_kriteria_1}' AND id_kriteria_2 = '${arr1.rows[i].id_kriteria_1}'`
           );
           count += 1;
         }
@@ -118,9 +119,40 @@ const normalisasiKriteria = async () => {
     })
 }
 
+const ahp = async () => {
+    return new Promise(async (resolve,reject) => {
+        const client = newClient();
+        client.connect();
+        const arr = await client.query(`select id_kriteria_1, sum(nilai_normalisasi)/count(id_kriteria_1) as bobot_akhir from perbandingan_kriteria group by id_kriteria_1;`)
+        const reset = await client.query(`DELETE FROM bobot_akhir
+        WHERE EXISTS (SELECT 1 FROM perbandingan_kriteria);`)
+        const queries = [];
+        for(var i = 0; i < arr.rowCount; i++){
+            queries.push(`INSERT INTO bobot_akhir(id_kriteria, nilai) VALUES('${arr.rows[i].id_kriteria_1}','${arr.rows[i].bobot_akhir}')`)
+        }
+        try {
+            for (const query of queries) {
+              const result = await client.query(query);
+            }
+            resolve({message:"insertion-was-successful"})
+          } catch (error) {
+            reject(error);
+          } finally {
+            client.end();
+          }
+    })
+}
+
 const lambdaMax = async () => {
     return new Promise((resolve,reject) => {
-        
+        const client = newClient();
+        client.connect();
+        client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
+                      JOIN (SELECT id_kriteria_2, SUM(nilai) s FROM perbandingan_kriteria GROUP BY id_kriteria_2) total
+                      ON bobot_akhir.id_kriteria = total.id_kriteria_2`, (err, result) => {
+                        if(err) reject(err.message)
+                        resolve(result.rows[0])
+                      })
     })
 }
 
@@ -129,5 +161,7 @@ module.exports = {
     getAllCriteria,
     deleteCriteria,
     insertPerbandingan,
-    normalisasiKriteria
+    normalisasiKriteria,
+    ahp,
+    lambdaMax
 }
