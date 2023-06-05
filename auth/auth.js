@@ -27,7 +27,7 @@ const login = async (user) => {
 		}
 		const match = await bcrypt.compareSync(user.password, result.rows[0].password)
         if (match) {
-			resolve({message:"login-success"})
+			resolve({name:result.rows[0].name})
 		}
         reject({message:"incorrect-password"})
         client.end();
