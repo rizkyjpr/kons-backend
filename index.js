@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const { register, login } = require('./auth/auth')
-const { add_criteria, addCriteria, getAllCriteria, deleteCriteria, insertPerbandingan, normalisasiKriteria, ahp, lambdaMax } = require('./criteria/criteria')
+const { add_criteria, addCriteria, getAllCriteria, deleteCriteria, insertPerbandingan, normalisasiKriteria, ahp, lambdaMax, ci, cr } = require('./criteria/criteria')
 const newClient = require('./connection')
 
 app.use(express.json())
@@ -104,9 +104,23 @@ app.post('/kriteria/lambdamax', async (_,res)=>{
 })
 
 //ci
+app.post('/kriteria/ci', async (_, res) => {
+    try {
+        return ci().then(result=> res.json(result))
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+})
 
 
 //cr
+app.post('/kriteria/cr', async (_, res) => {
+    try {
+        return cr.then(result=> res.json(result))
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+})
 
 
 //add supplier
