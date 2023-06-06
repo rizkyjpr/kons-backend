@@ -102,8 +102,9 @@ const normalisasiKriteria = async () => {
       const q3 = newClient();
       q3.connect();
       try {
+        var result
         for (const query of queries) {
-          const result = await q3.query(query);
+          result = await q3.query(query);
         }
 
         resolve(result.rows)
@@ -133,10 +134,12 @@ const ahp = async () => {
             queries.push(`INSERT INTO bobot_akhir(id_kriteria, nilai) VALUES('${arr.rows[i].id_kriteria_1}','${arr.rows[i].bobot_akhir}')`)
         }
         try {
-            for (const query of queries) {
-              const result = await client.query(query);
+          queries.push(`SELECT * FROM bobot_akhir;`)
+          var result  
+          for (const query of queries) {
+              result = await client.query(query);
             }
-            resolve({message:"insertion-was-successful"})
+            resolve(result.rows)
           } catch (error) {
             reject(error);
           } finally {
@@ -162,13 +165,13 @@ const ci = async () => {
   return new Promise(async (resolve,reject) => {
     const client = newClient();
     client.connect();
-    lambdaMax = await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
+    const lambdaMax = await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
                   JOIN (SELECT id_kriteria_2, SUM(nilai) s FROM perbandingan_kriteria GROUP BY id_kriteria_2) total
                   ON bobot_akhir.id_kriteria = total.id_kriteria_2;`)
-    const arr1 = await q1.query(
+    const arr1 = await client.query(
       `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
     );
-    result = (lambdaMax[0] - arr1.rowCount)/(arr1.rowCount-1)
+    const result = (lambdaMax.rows[0].lambda_max - arr1.rowCount)/(arr1.rowCount-1)
     resolve(result)
   })
 }
@@ -177,16 +180,16 @@ const cr = async () => {
   return new Promise(async (resolve,reject) => {
     const client = newClient();
     client.connect();
-    lambdaMax = await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
+    const lambdaMax = await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
                   JOIN (SELECT id_kriteria_2, SUM(nilai) s FROM perbandingan_kriteria GROUP BY id_kriteria_2) total
                   ON bobot_akhir.id_kriteria = total.id_kriteria_2;`)
     const arr1 = await q1.query(
       `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
     );
-    _ci = (lambdaMax[0] - arr1.rowCount)/(arr1.rowCount-1)
+    const _ci = (lambdaMax.rows[0].lambda_max - arr1.rowCount)/(arr1.rowCount-1)
 
     const ri = [0,0,0, 0.52, 0.89, 1.11, 1.25, 1.35, 1.40, 1.45, 1.49]
-    _cr = _ci/ri[arr1.rowCount]
+    const _cr = _ci/ri[arr1.rowCount]
     resolve(_cr)
   })
 }
