@@ -37,7 +37,7 @@ const login = async (user) => {
                 );
 
                 if (match) {
-                    resolve({ name: result.rows[0].name });
+                    resolve(result.rows[0]);
                 }
 
                 reject({ message: "incorrect-password" });
