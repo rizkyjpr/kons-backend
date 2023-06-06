@@ -147,10 +147,11 @@ const ahp = async () => {
             );
         }
         try {
+            let result;
             for (const query of queries) {
-                const result = await client.query(query);
+                result = await client.query(query);
             }
-            resolve({ message: "insertion-was-successful" });
+            resolve(result);
         } catch (error) {
             reject(error);
         } finally {
@@ -186,7 +187,9 @@ const ci = async () => {
         const arr1 = await client.query(
             `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
         );
-        result = (lambdaMax[0] - arr1.rowCount) / (arr1.rowCount - 1);
+        result =
+            (lambdaMax.rows[0].lambda_max - arr1.rowCount) /
+            (arr1.rowCount - 1);
         resolve(result);
     });
 };
@@ -202,7 +205,9 @@ const cr = async () => {
         const arr1 = await client.query(
             `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
         );
-        _ci = (lambdaMax[0] - arr1.rowCount) / (arr1.rowCount - 1);
+        let _ci =
+            (lambdaMax.rows[0].lambda_max - arr1.rowCount) /
+            (arr1.rowCount - 1);
 
         const ri = [0, 0, 0, 0.52, 0.89, 1.11, 1.25, 1.35, 1.4, 1.45, 1.49];
         _cr = _ci / ri[arr1.rowCount];
