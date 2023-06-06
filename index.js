@@ -14,6 +14,13 @@ const {
     ci,
     cr,
 } = require("./criteria/criteria");
+const {
+    addSuplier,
+    getSuplier,
+    updateSuplier,
+    deleteSuplier,
+    normalisasiSuplier,
+} = require("./suplier/suplier");
 const newClient = require("./connection");
 
 app.use(express.json());
@@ -132,7 +139,58 @@ app.post("/kriteria/cr", async (_, res) => {
 });
 
 //add supplier
+app.post("/supplier/add", async (req, res) => {
+    try {
+        return addSuplier(req.body).then((result) => {
+            res.json(result);
+        });
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+});
+
 //edit supplier
+app.post("/supplier/edit", async (req, res) => {
+    try {
+        return updateSuplier(req.body).then((result) => {
+            res.json(result);
+        });
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+});
+
 //delete supplier
+app.post("/supplier/delete", async (req, res) => {
+    try {
+        return deleteSuplier(req.body).then((result) => {
+            res.json(result);
+        });
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+});
+
+//get supplier
+app.post("/supplier/get", async (req, res) => {
+    try {
+        return getSuplier(req.body).then((result) => {
+            res.json(result);
+        });
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+});
+
 //hitung normalisasi semua supplier
+app.post("/supplier/normalisasi", async (req, res) => {
+    try {
+        return normalisasiSuplier(req.body).then((result) => {
+            res.json(result);
+        });
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+});
+
 //rank supplier
