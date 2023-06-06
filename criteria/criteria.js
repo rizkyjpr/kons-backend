@@ -98,13 +98,15 @@ const normalisasiKriteria = async () => {
           count += 1;
         }
       }
+      queries.push(`SELECT id_kriteria_1, id_kriteria_2, nilai_normalisasi FROM perbandingan_kriteria;`)
       const q3 = newClient();
       q3.connect();
       try {
         for (const query of queries) {
           const result = await q3.query(query);
         }
-        resolve({message:"data-was-normalize"})
+
+        resolve(result.rows)
       } catch (error) {
         reject(error);
       } finally {
