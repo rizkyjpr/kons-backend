@@ -105,7 +105,7 @@ app.post("/kriteria/normalisasi", async (_, res) => {
 });
 
 //hitung bobot AHP
-app.post("/kriteria/ahp", async (_, res) => {
+app.get("/kriteria/ahp", async (_, res) => {
     try {
         return ahp().then((result) => res.json(result));
     } catch (error) {
@@ -114,14 +114,14 @@ app.post("/kriteria/ahp", async (_, res) => {
 });
 
 //lm
-app.post("/kriteria/lambdamax", async (_, res) => {
+app.get("/kriteria/lambdamax", async (_, res) => {
     try {
         return lambdaMax().then((result) => res.json(result));
     } catch (error) {}
 });
 
 //ci
-app.post("/kriteria/ci", async (_, res) => {
+app.get("/kriteria/ci", async (_, res) => {
     try {
         return ci().then((result) => res.json(result));
     } catch (error) {
@@ -130,9 +130,9 @@ app.post("/kriteria/ci", async (_, res) => {
 });
 
 //cr
-app.post("/kriteria/cr", async (_, res) => {
+app.get("/kriteria/cr", async (_, res) => {
     try {
-        return cr.then((result) => res.json(result));
+        return cr().then((result) => res.json(result));
     } catch (error) {
         return res.status(500).json(error.message);
     }
