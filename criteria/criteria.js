@@ -147,13 +147,13 @@ const ahp = async () => {
             );
         }
         try {
-          queries.push(`SELECT * FROM bobot_akhir;`)
-          var result  
-          for (const query of queries) {
-              result = await client.query(query);
+            queries.push(`SELECT * FROM bobot_akhir;`);
+            var result;
+            for (const query of queries) {
+                result = await client.query(query);
             }
-            resolve(result.rows)
-          } catch (error) {
+            resolve(result.rows);
+        } catch (error) {
             reject(error);
         } finally {
             client.end();
@@ -178,37 +178,43 @@ const lambdaMax = async () => {
 };
 
 const ci = async () => {
-  return new Promise(async (resolve,reject) => {
-    const client = newClient();
-    client.connect();
-    const lambdaMax = await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
+    return new Promise(async (resolve, reject) => {
+        const client = newClient();
+        client.connect();
+        const lambdaMax =
+            await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
                   JOIN (SELECT id_kriteria_2, SUM(nilai) s FROM perbandingan_kriteria GROUP BY id_kriteria_2) total
-                  ON bobot_akhir.id_kriteria = total.id_kriteria_2;`)
-    const arr1 = await client.query(
-      `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
-    );
-    const result = (lambdaMax.rows[0].lambda_max - arr1.rowCount)/(arr1.rowCount-1)
-    resolve(result)
-  })
-}
+                  ON bobot_akhir.id_kriteria = total.id_kriteria_2;`);
+        const arr1 = await client.query(
+            `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
+        );
+        result =
+            (lambdaMax.rows[0].lambda_max - arr1.rowCount) /
+            (arr1.rowCount - 1);
+        resolve(result);
+    });
+};
 
 const cr = async () => {
-  return new Promise(async (resolve,reject) => {
-    const client = newClient();
-    client.connect();
-    const lambdaMax = await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
+    return new Promise(async (resolve, reject) => {
+        const client = newClient();
+        client.connect();
+        const lambdaMax =
+            await client.query(`SELECT SUM(bobot_akhir.nilai * total.s) lambda_max FROM bobot_akhir
                   JOIN (SELECT id_kriteria_2, SUM(nilai) s FROM perbandingan_kriteria GROUP BY id_kriteria_2) total
-                  ON bobot_akhir.id_kriteria = total.id_kriteria_2;`)
-    const arr1 = await q1.query(
-      `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
-    );
-    const _ci = (lambdaMax.rows[0].lambda_max - arr1.rowCount)/(arr1.rowCount-1)
+                  ON bobot_akhir.id_kriteria = total.id_kriteria_2;`);
+        const arr1 = await client.query(
+            `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
+        );
+        let _ci =
+            (lambdaMax.rows[0].lambda_max - arr1.rowCount) /
+            (arr1.rowCount - 1);
 
-    const ri = [0,0,0, 0.52, 0.89, 1.11, 1.25, 1.35, 1.40, 1.45, 1.49]
-    const _cr = _ci/ri[arr1.rowCount]
-    resolve(_cr)
-  })
-}
+        const ri = [0, 0, 0, 0.52, 0.89, 1.11, 1.25, 1.35, 1.4, 1.45, 1.49];
+        const _cr = _ci / ri[arr1.rowCount];
+        resolve(_cr);
+    });
+};
 
 module.exports = {
     addCriteria,
