@@ -183,15 +183,6 @@ app.post("/supplier", async (req, res) => {
     }
 });
 
-//get  supplier by id
-app.post("/supplier/:id", async (req, res) => {
-    try {
-        return getSupplierById(req.params).then(result => {res.json(result)})
-    } catch (error) {
-        return res.status(500).json(error.message)
-    }
-})
-
 //hitung normalisasi semua supplier
 app.post("/supplier/normalisasi", async (req, res) => {
     try {

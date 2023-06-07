@@ -21,25 +21,13 @@ const getallsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        client.query(`SELECT * from supplier`, (err, result) => {
-            if (err) reject(err.message);
-            resolve({ status: 200, message: "OK", data: result.rows });
-            client.end();
-        });
+        const data = await client.query(`SELECT * from supplier`);
+        const queries = [];
+        for (var i = 0; i < data.rowCount; i++) {
+            queries.push(`SELECT * FROM kriteria_supplier WHERE id_supplier = '${data.rows[i].id}'`);
+        }
     });
 };
-
-const getSupplierById = async (id) => {
-    return new Promise(async (resolve, reject) => {
-        const client = newClient();
-        client.connect();
-        client.query(`SELECT * FROM supplier WHERE supplier.id = '${id}'`, 
-            (err, result) => {
-                if(err) reject(err)
-                resolve(result.rows[0])
-            })
-    })
-}
 
 const deletesupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
@@ -95,7 +83,6 @@ const normalisasisupplier = async () => {
 module.exports = {
     addsupplier,
     getallsupplier,
-    getSupplierById,
     deletesupplier,
     updatesupplier,
     normalisasisupplier,
