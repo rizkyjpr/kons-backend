@@ -96,13 +96,15 @@ const updatesupplier = async (data) => {
 // TODO
 // benefit = (ci - cmin) / (cmax - cmin)
 // cost = (cmax - ci) / (cmax - cmin)
-const normalisasisupplier = async () => {
+
+const normalisasisupplier = async (id_supplier) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
+
         // min_max = [{id_kriteria = 'id', min='min', max='max'}]
         const min_max = await client.query(
-            `SELECT id_kriteria, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier GROUP BY id_kriteria;`
+            `SELECT id_kriteria, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier GROUP BY id_kriteria WHERE id_supplier IN (${id_supplier});`
         );
         // const benefit = (data.rows[i].nilai - min_max.rows[i].min) / (min_max.rows[i].max- min_max.rows[i].min)
         for (var i = 0; i < min_max.length; i++) {
@@ -123,11 +125,12 @@ const normalisasisupplier = async () => {
     });
 };
 
+//
 const bobotAkhir = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect()
-        client.query(``)
+        client.query(`SELECT SUM(ahp.nilai * sup.nilai_normalisasi) FROM kriteria_supplier sup JOIN bobot_akhir ahp ON id_supplier`)
     })
 }
 

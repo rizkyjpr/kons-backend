@@ -186,7 +186,7 @@ app.get("/supplier", async (_, res) => {
 //hitung normalisasi semua supplier
 app.post("/supplier/normalisasi", async (req, res) => {
     try {
-        return normalisasisupplier(req.body).then((result) => {
+        return normalisasisupplier(req.body.id_supplier).then((result) => {
             res.json(result);
         });
     } catch (error) {
@@ -194,4 +194,13 @@ app.post("/supplier/normalisasi", async (req, res) => {
     }
 });
 
+//raja terakhir --> rating supplier akhir
+app.get("/supplier/bobot-akhir", async (_, res) => {
+    try {
+        return 
+    } catch (error) {
+        return res.status(500).json(error.message);
+
+    }
+})
 //rank supplier
