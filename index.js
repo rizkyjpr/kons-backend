@@ -161,9 +161,9 @@ app.post("/supplier/edit", async (req, res) => {
 });
 
 //delete supplier
-app.post("/supplier/delete", async (req, res) => {
+app.delete("/supplier/delete/:id", async (req, res) => {
     try {
-        return deleteSuplier(req.body).then((result) => {
+        return deleteSuplier(req.params).then((result) => {
             res.json(result);
         });
     } catch (error) {
