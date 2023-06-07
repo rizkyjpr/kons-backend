@@ -17,7 +17,7 @@ const addsupplier = async (data) => {
     });
 };
 
-const getsupplier = async (data) => {
+const getallsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
@@ -82,7 +82,7 @@ const normalisasisupplier = async () => {
 
 module.exports = {
     addsupplier,
-    getsupplier,
+    getallsupplier,
     deletesupplier,
     updatesupplier,
     normalisasisupplier,

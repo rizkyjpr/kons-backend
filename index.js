@@ -174,7 +174,7 @@ app.delete("/supplier/delete/:id", async (req, res) => {
 //get supplier
 app.post("/supplier/get", async (req, res) => {
     try {
-        return getsupplier(req.body).then((result) => {
+        return getallsupplier(req.body).then((result) => {
             res.json(result);
         });
     } catch (error) {
