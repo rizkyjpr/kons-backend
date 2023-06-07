@@ -29,6 +29,18 @@ const getallsupplier = async (data) => {
     });
 };
 
+const getSupplierById = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        const client = newClient();
+        client.connect();
+        client.query(`SELECT * FROM supplier WHERE supplier.id = '${id}'`, 
+            (err, result) => {
+                if(err) reject(err)
+                resolve(result.rows[0])
+            })
+    })
+}
+
 const deletesupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
@@ -83,6 +95,7 @@ const normalisasisupplier = async () => {
 module.exports = {
     addsupplier,
     getallsupplier,
+    getSupplierById,
     deletesupplier,
     updatesupplier,
     normalisasisupplier,

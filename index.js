@@ -22,6 +22,7 @@ const {
     normalisasisupplier,
 } = require("./supplier/supplier");
 const newClient = require("./connection");
+const { getSupplierById } = require("./supplier/supplier");
 
 app.use(express.json());
 app.use(cors());
@@ -150,7 +151,7 @@ app.post("/supplier/add", async (req, res) => {
 });
 
 //edit supplier
-app.post("/supplier/edit", async (req, res) => {
+app.patch("/supplier", async (req, res) => {
     try {
         return updatesupplier(req.body).then((result) => {
             res.json(result);
@@ -161,7 +162,7 @@ app.post("/supplier/edit", async (req, res) => {
 });
 
 //delete supplier
-app.delete("/supplier/delete/:id", async (req, res) => {
+app.delete("/supplier/:id", async (req, res) => {
     try {
         return deletesupplier(req.params).then((result) => {
             res.json(result);
@@ -171,8 +172,8 @@ app.delete("/supplier/delete/:id", async (req, res) => {
     }
 });
 
-//get supplier
-app.post("/supplier/get", async (req, res) => {
+//get all supplier
+app.post("/supplier", async (req, res) => {
     try {
         return getallsupplier(req.body).then((result) => {
             res.json(result);
@@ -181,6 +182,15 @@ app.post("/supplier/get", async (req, res) => {
         return res.status(500).json(error.message);
     }
 });
+
+//get  supplier by id
+app.post("/supplier/:id", async (req, res) => {
+    try {
+        return getSupplierById(req.params).then(result => {res.json(result)})
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+})
 
 //hitung normalisasi semua supplier
 app.post("/supplier/normalisasi", async (req, res) => {
