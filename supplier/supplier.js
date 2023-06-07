@@ -26,6 +26,20 @@ const getallsupplier = async (data) => {
         for (var i = 0; i < data.rowCount; i++) {
             queries.push(`SELECT * FROM kriteria_supplier WHERE id_supplier = '${data.rows[i].id}'`);
         }
+        const result = [];
+        try {
+            index = 0;
+            for(query of queries){
+                const temp = await client.query(query);
+                result[index] = temp.rows[0]
+                index += 1
+            }
+            resolve(result)
+        } catch (error) {
+            reject(error)
+        } finally{
+            client.end()
+        }
     });
 };
 
