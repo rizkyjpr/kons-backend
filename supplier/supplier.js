@@ -126,7 +126,7 @@ const normalisasisupplier = async (id_supplier) => {
             );
         }
         const result = await client.query(
-            `SELECT id_kriteria, id_supplier, nilai_normalisasi`
+            `SELECT id_kriteria, id_supplier, nilai_normalisasi FROM kriteria_supplier`
         );
         resolve(result.rows);
     });
