@@ -1,13 +1,13 @@
 const newClient = require("../connection");
 
-const addSuplier = async (data) => {
+const addsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        var result_suplier =
+        var result_supplier =
             await client.query(`INSERT INTO supplier (name, added_by) 
                       VALUES ('${data.name}','${data.added_by}')`);
-        var supplier_id = result_suplier.id;
+        var supplier_id = result_supplier.id;
 
         for (var i = 0; i < data.length; i++) {
             await client.query(`INSERT INTO kriteria_supplier (id_kriteria, id_supplier, nilai)
@@ -17,7 +17,7 @@ const addSuplier = async (data) => {
     });
 };
 
-const getSuplier = async (data) => {
+const getsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
@@ -29,7 +29,7 @@ const getSuplier = async (data) => {
     });
 };
 
-const deleteSuplier = async (data) => {
+const deletesupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
@@ -46,7 +46,7 @@ const deleteSuplier = async (data) => {
 };
 
 //kurang update rating kriteria dari supplier
-const updateSuplier = async (data) => {
+const updatesupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
@@ -69,7 +69,7 @@ const updateSuplier = async (data) => {
 // TODO
 // benefit = (ci - cmin) / (cmax - cmin)
 // cost = (cmax - ci) / (cmax - cmin)
-const normalisasiSuplier = async () => {
+const normalisasisupplier = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
@@ -81,9 +81,9 @@ const normalisasiSuplier = async () => {
 };
 
 module.exports = {
-    addSuplier,
-    getSuplier,
-    deleteSuplier,
-    updateSuplier,
-    normalisasiSuplier,
+    addsupplier,
+    getsupplier,
+    deletesupplier,
+    updatesupplier,
+    normalisasisupplier,
 };

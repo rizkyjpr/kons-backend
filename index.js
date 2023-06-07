@@ -15,12 +15,12 @@ const {
     cr,
 } = require("./criteria/criteria");
 const {
-    addSuplier,
-    getSuplier,
-    updateSuplier,
-    deleteSuplier,
-    normalisasiSuplier,
-} = require("./suplier/suplier");
+    addsupplier,
+    getsupplier,
+    updatesupplier,
+    deletesupplier,
+    normalisasisupplier,
+} = require("./supplier/supplier");
 const newClient = require("./connection");
 
 app.use(express.json());
@@ -141,7 +141,7 @@ app.get("/kriteria/cr", async (_, res) => {
 //add supplier
 app.post("/supplier/add", async (req, res) => {
     try {
-        return addSuplier(req.body).then((result) => {
+        return addsupplier(req.body).then((result) => {
             res.json(result);
         });
     } catch (error) {
@@ -152,7 +152,7 @@ app.post("/supplier/add", async (req, res) => {
 //edit supplier
 app.post("/supplier/edit", async (req, res) => {
     try {
-        return updateSuplier(req.body).then((result) => {
+        return updatesupplier(req.body).then((result) => {
             res.json(result);
         });
     } catch (error) {
@@ -163,7 +163,7 @@ app.post("/supplier/edit", async (req, res) => {
 //delete supplier
 app.delete("/supplier/delete/:id", async (req, res) => {
     try {
-        return deleteSuplier(req.params).then((result) => {
+        return deletesupplier(req.params).then((result) => {
             res.json(result);
         });
     } catch (error) {
@@ -174,7 +174,7 @@ app.delete("/supplier/delete/:id", async (req, res) => {
 //get supplier
 app.post("/supplier/get", async (req, res) => {
     try {
-        return getSuplier(req.body).then((result) => {
+        return getsupplier(req.body).then((result) => {
             res.json(result);
         });
     } catch (error) {
@@ -185,7 +185,7 @@ app.post("/supplier/get", async (req, res) => {
 //hitung normalisasi semua supplier
 app.post("/supplier/normalisasi", async (req, res) => {
     try {
-        return normalisasiSuplier(req.body).then((result) => {
+        return normalisasisupplier(req.body).then((result) => {
             res.json(result);
         });
     } catch (error) {
