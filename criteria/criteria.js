@@ -20,7 +20,7 @@ const getAllCriteria = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        client.query(`SELECT * FROM kriteria`, (err, result) => {
+        client.query(`SELECT id, u.name username, name, type FROM kriteria k JOIN user u ON u.id = k.added_by`, (err, result) => {
             if (err) reject(err.message);
             if (!result) reject({ status: 404, message: "data-not-found" });
             resolve(result.rows);
