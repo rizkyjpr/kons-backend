@@ -135,6 +135,12 @@ const normalisasisupplier = async (id_supplier) => {
     });
 };
 
+// TODO : MAKE RATING USE SELECTED KRITERIA AND SUPPLIER (BODY: ID_SUPPLIER DAN ID_KRITERIA)
+// {
+//     id_supplier : [id1, id2, id3]
+//     id_kriteria: [id1,id2,id3]
+// }
+
 const rating = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
@@ -150,6 +156,12 @@ const rating = async () => {
         resolve({ status: 202, message: "deletion-was-successful" });
     });
 };
+
+// TODO : MAKE RATING USE SELECTED KRITERIA AND SUPPLIER (BODY: ID_SUPPLIER DAN ID_KRITERIA)
+// {
+//     id_supplier : [id1, id2, id3]
+//     id_kriteria: [id1,id2,id3]
+// }
 
 const rank = async () => {
     return new Promise(async (resolve, reject) => {

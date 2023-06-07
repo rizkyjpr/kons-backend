@@ -199,18 +199,21 @@ app.post("/supplier/normalisasi", async (req, res) => {
 //hitung rating supplier
 app.get("/supplier/rating", async (_, res) => {
     try {
-        return rating().then(result => {res.json(result)})
+        return rating().then((result) => {
+            res.json(result);
+        });
     } catch (error) {
         return res.status(500).json(error.message);
-
     }
-})
+});
 
 //list rank supplier sesuai rating
-app.get("/supplier/rank", async (_,res) => {
+app.get("/supplier/rank", async (_, res) => {
     try {
-        return rank().then(result => {res.json(result)})
+        return rank().then((result) => {
+            res.json(result);
+        });
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json(error.message);
     }
-})
+});
