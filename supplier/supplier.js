@@ -13,6 +13,7 @@ const addsupplier = async (data) => {
             await client.query(`INSERT INTO kriteria_supplier (id_kriteria, id_supplier, nilai)
                               VALUES ('${data.rating[i].id_kriteria}', '${supplier_id}', '${data.rating[i].nilai}')`);
         }
+        resolve({ status: 201, message: "insertion-was-successful" });
         client.end();
     });
 };
@@ -91,6 +92,13 @@ const normalisasisupplier = async () => {
         const min_max = await client.query(
             `SELECT id_kriteria, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier GROUP BY id_kriteria;`
         );
+        // const benefit = (data.rows[i].nilai - min_max.rows[i].min) / (min_max.rows[i].max- min_max.rows[i].min)
+        for(var i = 0; i < min_max.length; i++){
+            const data = await client.query(`SELECT ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max[i].id_kriteria}'`)
+            // await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi='${data.rows[i].type == "benefit"}'`)
+            const normalisasi = data.rows[0].type == "benefit" ? (data.rows[0].nilai - min_max.rows[i].min) / (min_max.rows[i].max - min_max.rows[i].min) : (min_max.rows[i].max - data.rows[0].nilai) / (min_max.rows[i].max - min_max.rows[i].min)
+            await client.query(`UPDATE kriteria_supplier `)
+        }
     });
 };
 
