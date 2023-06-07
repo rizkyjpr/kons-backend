@@ -38,6 +38,7 @@ const getallsupplier = async (data) => {
             for (query of queries) {
                 const temp = await client.query(query);
                 result.push({
+                    id: data.rows[index].id,
                     name: data.rows[index].name,
                     added_by: data.rows[index].username,
                     kriteria: temp.rows,
