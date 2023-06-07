@@ -4,7 +4,8 @@ const addsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        var supplier_id = await client.query(`INSERT INTO supplier (name, added_by) 
+        var supplier_id =
+            await client.query(`INSERT INTO supplier (name, added_by) 
                       VALUES ('${data.name}','${data.added_by}') RETURNING id`);
         // var supplier_id = await client.query(
         //     `SELECT id FROM supplier WHERE name = '${data.name}' AND added_by='${data.added_by}'`
@@ -78,13 +79,13 @@ const updatesupplier = async (data) => {
         const client = newClient();
         client.connect();
         client.query(
-            `UPDATE supplier SET name='${data.name}', added_by='${data.added_by}'
-                    WHERE id = '${data.id_supplier}'`,
+            `UPDATE supplier SET name='${data.name}', added_by='${data.added_by}' WHERE id = '${data.id_supplier}'`,
             (err) => {
                 if (err) reject(err.message);
             }
         );
-        for (var i = 1; i < data.length; i++) {
+
+        for (var i = 0; i < data.rating.length; i++) {
             await client.query(`UPDATE kriteria_supplier SET nilai='${data.rating[i].nilai}'
                             WHERE id_kriteria = '${data.rating[i].id_kriteria}' AND id_supplier='${data.rating[i].id_supplier}'`);
         }
@@ -118,7 +119,9 @@ const normalisasisupplier = async (id_supplier) => {
                       (min_max.rows[i].max - min_max.rows[i].min)
                     : (min_max.rows[i].max - data.rows[0].nilai) /
                       (min_max.rows[i].max - min_max.rows[i].min);
-            await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`);
+            await client.query(
+                `UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`
+            );
         }
         const result = await client.query(`SELECT id_kriteria, id_supplier, nilai_normalisasi`)
         resolve(result.rows)
