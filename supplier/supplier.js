@@ -59,7 +59,9 @@ const deletesupplier = async (data) => {
         client.connect();
         client.query(
             `DELETE FROM supplier
-                      WHERE id = '${data.id}'`,
+                      WHERE id = '${data.id}';
+             DELETE FROM kriteria_supplier
+                      WHERE id_supplier = '${data.id}'`,
             (err) => {
                 if (err) reject(err.message);
                 resolve({ status: 202, message: "deletion-was-successful" });
