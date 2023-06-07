@@ -107,7 +107,7 @@ const normalisasisupplier = async () => {
         // const benefit = (data.rows[i].nilai - min_max.rows[i].min) / (min_max.rows[i].max- min_max.rows[i].min)
         for (var i = 0; i < min_max.length; i++) {
             const data = await client.query(
-                `SELECT ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max[i].id_kriteria}'`
+                `SELECT ks.id id, ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max[i].id_kriteria}'`
             );
             // await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi='${data.rows[i].type == "benefit"}'`)
             const normalisasi =
@@ -116,10 +116,11 @@ const normalisasisupplier = async () => {
                       (min_max.rows[i].max - min_max.rows[i].min)
                     : (min_max.rows[i].max - data.rows[0].nilai) /
                       (min_max.rows[i].max - min_max.rows[i].min);
-            await client.query(`UPDATE kriteria_supplier `);
+            await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`);
         }
     });
 };
+
 
 module.exports = {
     addsupplier,
