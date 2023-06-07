@@ -4,15 +4,15 @@ const addsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        await client.query(`INSERT INTO supplier (name, added_by) 
-                      VALUES ('${data.name}','${data.added_by}')`);
-        var supplier_id = await client.query(
-            `SELECT id FROM supplier WHERE name = '${data.name}' AND added_by='${data.added_by}'`
-        );
+        var supplier_id = await client.query(`INSERT INTO supplier (name, added_by) 
+                      VALUES ('${data.name}','${data.added_by}') RETURNING id`);
+        // var supplier_id = await client.query(
+        //     `SELECT id FROM supplier WHERE name = '${data.name}' AND added_by='${data.added_by}'`
+        // );
 
         for (var i = 0; i < data.rating.length; i++) {
             await client.query(`INSERT INTO kriteria_supplier (id_kriteria, id_supplier, nilai)
-                              VALUES ('${data.rating[i].id_kriteria}', '${supplier_id.rows[0].id}', '${data.rating[i].nilai}')`);
+                              VALUES ('${data.rating[i].id_kriteria}', '${supplier_id}', '${data.rating[i].nilai}')`);
         }
         resolve({ status: 201, message: "insertion-was-successful" });
         client.end();
@@ -78,7 +78,7 @@ const updatesupplier = async (data) => {
         const client = newClient();
         client.connect();
         client.query(
-            `UPDATE supplier SET name='${data.name}', added_by='${data.added_by}' FROM supplier
+            `UPDATE supplier SET name='${data.name}', added_by='${data.added_by}'
                     WHERE id = '${data.id_supplier}'`,
             (err) => {
                 if (err) reject(err.message);
@@ -120,6 +120,14 @@ const normalisasisupplier = async () => {
         }
     });
 };
+
+const bobotAkhir = async () => {
+    return new Promise(async (resolve, reject) => {
+        const client = newClient();
+        client.connect()
+        client.query()
+    })
+}
 
 
 module.exports = {
