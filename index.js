@@ -16,7 +16,7 @@ const {
 } = require("./criteria/criteria");
 const {
     addsupplier,
-    getsupplier,
+    getallsupplier,
     updatesupplier,
     deletesupplier,
     normalisasisupplier,
@@ -173,9 +173,9 @@ app.delete("/supplier/:id", async (req, res) => {
 });
 
 //get all supplier
-app.post("/supplier", async (req, res) => {
+app.get("/supplier", async (req, res) => {
     try {
-        return getallsupplier(req.body).then((result) => {
+        return getallsupplier().then((result) => {
             res.json(result);
         });
     } catch (error) {
