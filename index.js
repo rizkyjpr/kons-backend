@@ -197,9 +197,9 @@ app.post("/supplier/normalisasi", async (req, res) => {
 });
 
 //hitung rating supplier
-app.get("/supplier/rating", async (_, res) => {
+app.post("/supplier/rating", async (_, res) => {
     try {
-        return rating().then((result) => {
+        return rating(req.body.id_supplier).then((result) => {
             res.json(result);
         });
     } catch (error) {

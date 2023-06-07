@@ -141,12 +141,13 @@ const normalisasisupplier = async (id_supplier) => {
 //     id_kriteria: [id1,id2,id3]
 // }
 
-const rating = async () => {
+// 
+const rating = async (idsup) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
         const data = await client.query(
-            `SELECT sup.id_supplier id_supplier, SUM(ahp.nilai * sup.nilai_normalisasi) rating FROM kriteria_supplier sup JOIN bobot_akhir ahp ON ahp.id_kriteria = sup.id_kriteria GROUP BY sup.id_supplier`
+            `SELECT sup.id_supplier id_supplier, SUM(ahp.nilai * sup.nilai_normalisasi) rating FROM kriteria_supplier sup JOIN bobot_akhir ahp ON ahp.id_kriteria = sup.id_kriteria WHERE id_supplier IN(${idsup}) GROUP BY sup.id_supplier`
         );
         for (var i = 0; i < data.rowCount; i++) {
             client.query(
