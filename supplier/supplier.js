@@ -103,9 +103,11 @@ const normalisasisupplier = async (id_supplier) => {
         const client = newClient();
         client.connect();
 
+        console.log(id_supplier);
+
         // min_max = [{id_kriteria = 'id', min='min', max='max'}]
         const min_max = await client.query(
-            `SELECT id_kriteria, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier GROUP BY id_kriteria WHERE id_supplier IN (${id_supplier});`
+            `SELECT id_kriteria, id_supplier, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier WHERE id_supplier IN (${id_supplier}) GROUP BY id_kriteria, id_supplier;`
         );
         // const benefit = (data.rows[i].nilai - min_max.rows[i].min) / (min_max.rows[i].max- min_max.rows[i].min)
         for (var i = 0; i < min_max.length; i++) {
@@ -123,35 +125,42 @@ const normalisasisupplier = async (id_supplier) => {
                 `UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`
             );
         }
-        const result = await client.query(`SELECT id_kriteria, id_supplier, nilai_normalisasi`)
-        resolve(result.rows)
+        const result = await client.query(
+            `SELECT id_kriteria, id_supplier, nilai_normalisasi`
+        );
+        resolve(result.rows);
     });
 };
 
 const rating = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
-        client.connect()
-        const data = await client.query(`SELECT sup.id_supplier id_supplier, SUM(ahp.nilai * sup.nilai_normalisasi) rating FROM kriteria_supplier sup JOIN bobot_akhir ahp ON ahp.id_kriteria = sup.id_kriteria GROUP BY sup.id_supplier`)
-        for(var i = 0; i < data.rowCount; i++){
-            client.query(`UPDATE supplier SET rating = '${data.rows[i].rating}' WHERE id = '${data.rows[i].id_supplier}'`)
+        client.connect();
+        const data = await client.query(
+            `SELECT sup.id_supplier id_supplier, SUM(ahp.nilai * sup.nilai_normalisasi) rating FROM kriteria_supplier sup JOIN bobot_akhir ahp ON ahp.id_kriteria = sup.id_kriteria GROUP BY sup.id_supplier`
+        );
+        for (var i = 0; i < data.rowCount; i++) {
+            client.query(
+                `UPDATE supplier SET rating = '${data.rows[i].rating}' WHERE id = '${data.rows[i].id_supplier}'`
+            );
         }
-        resolve({status:202, message:"deletion-was-successful"})
-    })
-}
+        resolve({ status: 202, message: "deletion-was-successful" });
+    });
+};
 
-const rank = async() => {
+const rank = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        client.query(`SELECT nama, rating FROM supplier ORDER BY rating`,
-                        (err,result) => {
-                            if(err) reject(err)
-                            resolve(result.rows)
-                        })
-    })
-}
-
+        client.query(
+            `SELECT nama, rating FROM supplier ORDER BY rating`,
+            (err, result) => {
+                if (err) reject(err);
+                resolve(result.rows);
+            }
+        );
+    });
+};
 
 module.exports = {
     addsupplier,
@@ -160,5 +169,5 @@ module.exports = {
     updatesupplier,
     normalisasisupplier,
     rating,
-    rank
+    rank,
 };
