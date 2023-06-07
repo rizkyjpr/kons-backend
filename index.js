@@ -173,7 +173,7 @@ app.delete("/supplier/:id", async (req, res) => {
 });
 
 //get all supplier
-app.get("/supplier", async (req, res) => {
+app.get("/supplier", async (_, res) => {
     try {
         return getallsupplier().then((result) => {
             res.json(result);
