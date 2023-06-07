@@ -6,7 +6,9 @@ const addsupplier = async (data) => {
         client.connect();
         await client.query(`INSERT INTO supplier (name, added_by) 
                       VALUES ('${data.name}','${data.added_by}')`);
-        var supplier_id = await client.query(`SELECT id FROM supplier WHERE name = '${data.name}' AND added_by='${data.added_by}'`)
+        var supplier_id = await client.query(
+            `SELECT id FROM supplier WHERE name = '${data.name}' AND added_by='${data.added_by}'`
+        );
 
         for (var i = 0; i < data.rating.length; i++) {
             await client.query(`INSERT INTO kriteria_supplier (id_kriteria, id_supplier, nilai)
@@ -21,24 +23,32 @@ const getallsupplier = async (data) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
-        const data = await client.query(`SELECT * from supplier`);
+        const data = await client.query(
+            `SELECT supplier.id, supplier.name, supplier.added_by, supplier.rating, u.name username from supplier JOIN public."user" AS u ON u.id = supplier.added_by`
+        );
         const queries = [];
         for (var i = 0; i < data.rowCount; i++) {
-            queries.push(`SELECT * FROM kriteria_supplier WHERE id_supplier = '${data.rows[i].id}'`);
+            queries.push(
+                `SELECT * FROM kriteria_supplier WHERE id_supplier = '${data.rows[i].id}'`
+            );
         }
         const result = [];
         try {
             index = 0;
-            for(query of queries){
+            for (query of queries) {
                 const temp = await client.query(query);
-                result[index] = temp.rows[0]
-                index += 1
+                result.push({
+                    name: data.rows[index].name,
+                    added_by: data.rows[index].username,
+                    kriteria: temp.rows,
+                });
+                index += 1;
             }
-            resolve(result)
+            resolve(result);
         } catch (error) {
-            reject(error)
-        } finally{
-            client.end()
+            reject(error);
+        } finally {
+            client.end();
         }
     });
 };
@@ -92,11 +102,18 @@ const normalisasisupplier = async () => {
             `SELECT id_kriteria, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier GROUP BY id_kriteria;`
         );
         // const benefit = (data.rows[i].nilai - min_max.rows[i].min) / (min_max.rows[i].max- min_max.rows[i].min)
-        for(var i = 0; i < min_max.length; i++){
-            const data = await client.query(`SELECT ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max[i].id_kriteria}'`)
+        for (var i = 0; i < min_max.length; i++) {
+            const data = await client.query(
+                `SELECT ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max[i].id_kriteria}'`
+            );
             // await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi='${data.rows[i].type == "benefit"}'`)
-            const normalisasi = data.rows[0].type == "benefit" ? (data.rows[0].nilai - min_max.rows[i].min) / (min_max.rows[i].max - min_max.rows[i].min) : (min_max.rows[i].max - data.rows[0].nilai) / (min_max.rows[i].max - min_max.rows[i].min)
-            await client.query(`UPDATE kriteria_supplier `)
+            const normalisasi =
+                data.rows[0].type == "benefit"
+                    ? (data.rows[0].nilai - min_max.rows[i].min) /
+                      (min_max.rows[i].max - min_max.rows[i].min)
+                    : (min_max.rows[i].max - data.rows[0].nilai) /
+                      (min_max.rows[i].max - min_max.rows[i].min);
+            await client.query(`UPDATE kriteria_supplier `);
         }
     });
 };
