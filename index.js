@@ -210,7 +210,7 @@ app.post("/supplier/rating", async (_, res) => {
 //list rank supplier sesuai rating
 app.get("/supplier/rank", async (_, res) => {
     try {
-        return rank().then((result) => {
+        return rank(req.body.id_supplier).then((result) => {
             res.json(result);
         });
     } catch (error) {

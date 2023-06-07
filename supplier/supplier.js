@@ -164,12 +164,12 @@ const rating = async (idsup) => {
 //     id_kriteria: [id1,id2,id3]
 // }
 
-const rank = async () => {
+const rank = async (id) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect();
         client.query(
-            `SELECT nama, rating FROM supplier ORDER BY rating`,
+            `SELECT nama, rating FROM supplier WHERE id IN(${id}) ORDER BY rating DESC`,
             (err, result) => {
                 if (err) reject(err);
                 resolve(result.rows);
