@@ -4,16 +4,18 @@ const addSuplier = async (data) => {
     return new Promise(async (resolve,reject) => {
         const client = newClient();
         client.connect();
-        var result_suplier = await client.query(`INSERT INTO supplier (name, added_by, rating) 
-                      VALUES ('${data.name}','${data.added_by}','${data.rating}')`);
+        var result_suplier = await client.query(`INSERT INTO supplier (name, added_by) 
+                      VALUES ('${data.name}','${data.added_by}')`);
         var supplier_id = result_suplier.id
 
         var kriterias = await client.query(`SELECT * FROM kriteria`)
         var index = 0;
-        for item in kriterias:
+        kriterias.forEach( async (item) => {
           await client.query(`INSERT INTO kriteria_supplier (id_kriteria, id_supplier, nilai)
                             VALUES ('${item.id}', '${supplier_id}', '${data.nilai[index]}')`)
           index += 1;
+        })
+        client.end()
     })
 }
 
@@ -24,7 +26,7 @@ const getSuplier = async (data) => {
       client.query(`SELECT * from supplier`,
                     (err, result) => {
                       if(err) reject(err.message)
-                      resolve({status:201, message:"insertion-was-successful", "data": result.rows})
+                      resolve({status:200, message:"OK", data: result.rows})
                       client.end();
                     })
   })
@@ -39,25 +41,63 @@ const deleteSuplier = async (data) => {
                       (err) => {
                         if(err) reject(err.message)
                         resolve({status:202, message:"deletion-was-successful"})
+                        client.end();
+
                       })
     })
 }
 
+[{
+  name:"nama",
+  added_by:"added by",
+  id_supplier:"id supp"
+ },
+ {id_supplier:"id supp", 
+  id_kriteria:"id kri", 
+  nilai:"nilai"
+ },
+
+ {
+  id_supplier:"id supp", 
+  id_kriteria:"id kri", 
+  nilai:"nilai"
+ },
+
+ {
+  id_supplier:"id supp", 
+  id_kriteria:"id kri", 
+  nilai:"nilai"
+ },
+
+ {
+  id_supplier:"id supp", 
+  id_kriteria:"id kri", 
+  nilai:"nilai"
+ }]
+
+//kurang update rating kriteria dari supplier
 const updateSuplier = async (data) => {
   return new Promise(async (resolve, reject) => {
       const client = newClient();
       client.connect();
       client.query(`UPDATE supplier SET name='${data.name}', added_by='${data.added_by}' FROM supplier
-                    WHERE id = '${data.id}'`,
+                    WHERE id = '${data.id_supplier}'`,
                     (err) => {
                       if(err) reject(err.message)
-                      resolve({status:202, message:"deletion-was-successful"})
+                      resolve({status:202, message:"update-was-successful"})
                     })
+      for(var i = 1; i < data.length; i++){
+        await client.query(`UPDATE kriteria_supplier SET nilai='${data[i].nilai}'
+                            WHERE id_kriteria = '${data[i].id_kriteria}' AND id_supplier='${data[i].id_supplier}'`)
+        
+      }
+      client.end();
   })
 }
 
-
 // TODO
+// benefit = (ci - cmin) / (cmax - cmin)
+// cost = (cmax - ci) / (cmax - cmin)
 const normalisasiSuplier = async () => {
     return new Promise(async (resolve, reject) => {
         const q1 = newClient();
