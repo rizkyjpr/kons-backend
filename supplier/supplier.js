@@ -58,8 +58,8 @@ const updatesupplier = async (data) => {
             }
         );
         for (var i = 1; i < data.length; i++) {
-            await client.query(`UPDATE kriteria_supplier SET nilai='${data[i].nilai}'
-                            WHERE id_kriteria = '${data[i].id_kriteria}' AND id_supplier='${data[i].id_supplier}'`);
+            await client.query(`UPDATE kriteria_supplier SET nilai='${data.rating[i].nilai}'
+                            WHERE id_kriteria = '${data.rating[i].id_kriteria}' AND id_supplier='${data.rating[i].id_supplier}'`);
         }
         resolve({ status: 202, message: "update-was-successful" });
         client.end();
