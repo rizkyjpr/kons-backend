@@ -13,7 +13,7 @@ const addsupplier = async (data) => {
 
         for (var i = 0; i < data.rating.length; i++) {
             await client.query(`INSERT INTO kriteria_supplier (id_kriteria, id_supplier, nilai)
-                              VALUES ('${data.rating[i].id_kriteria}', '${supplier_id}', '${data.rating[i].nilai}')`);
+                              VALUES ('${data.rating[i].id_kriteria}', '${supplier_id.rows[0].id}', '${data.rating[i].nilai}')`);
         }
         resolve({ status: 201, message: "insertion-was-successful" });
         client.end();
@@ -105,25 +105,28 @@ const normalisasisupplier = async (id_supplier) => {
 
         console.log(id_supplier);
 
-        // min_max = [{id_kriteria = 'id', min='min', max='max'}]
         const min_max = await client.query(
-            `SELECT id_kriteria, id_supplier, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier WHERE id_supplier IN (${id_supplier}) GROUP BY id_kriteria, id_supplier;`
+            `SELECT id_kriteria, MIN(nilai) min, MAX(nilai) max FROM kriteria_supplier WHERE id_supplier IN (${id_supplier}) GROUP BY id_kriteria;`
         );
+        const idsup = id_supplier.split(",");
+        // console.log(min_max.rows);
         // const benefit = (data.rows[i].nilai - min_max.rows[i].min) / (min_max.rows[i].max- min_max.rows[i].min)
-        for (var i = 0; i < min_max.length; i++) {
-            const data = await client.query(
-                `SELECT ks.id id, ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max[i].id_kriteria}'`
-            );
-            // await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi='${data.rows[i].type == "benefit"}'`)
-            const normalisasi =
-                data.rows[0].type == "benefit"
-                    ? (data.rows[0].nilai - min_max.rows[i].min) /
-                      (min_max.rows[i].max - min_max.rows[i].min)
-                    : (min_max.rows[i].max - data.rows[0].nilai) /
-                      (min_max.rows[i].max - min_max.rows[i].min);
-            await client.query(
-                `UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`
-            );
+
+        for (var i = 0; i < min_max.rowCount; i++) {
+            for (var j = 0; j < idsup.length; j++) {
+                const data = await client.query(
+                    `SELECT ks.id id, ks.nilai nilai, k.id id_kriteria, k.type type FROM kriteria_supplier ks JOIN kriteria k ON ks.id_kriteria = k.id WHERE id_kriteria = '${min_max.rows[i].id_kriteria}' AND id_supplier = ${idsup[j]}`
+                );
+                const normalisasi =
+                    data.rows[0].type == "Benefit"
+                        ? (data.rows[0].nilai - min_max.rows[i].min) /
+                          (min_max.rows[i].max - min_max.rows[i].min)
+                        : (min_max.rows[i].max - data.rows[0].nilai) /
+                          (min_max.rows[i].max - min_max.rows[i].min);
+                await client.query(
+                    `UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`
+                );
+            }
         }
         const result = await client.query(
             `SELECT id_kriteria, id_supplier, nilai_normalisasi FROM kriteria_supplier`
