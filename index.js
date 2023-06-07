@@ -23,6 +23,8 @@ const {
 } = require("./supplier/supplier");
 const newClient = require("./connection");
 const { getSupplierById } = require("./supplier/supplier");
+const { rating } = require("./supplier/supplier");
+const { rank } = require("./supplier/supplier");
 
 app.use(express.json());
 app.use(cors());
@@ -194,13 +196,21 @@ app.post("/supplier/normalisasi", async (req, res) => {
     }
 });
 
-//raja terakhir --> rating supplier akhir
-app.get("/supplier/bobot-akhir", async (_, res) => {
+//hitung rating supplier
+app.get("/supplier/rating", async (_, res) => {
     try {
-        return 
+        return rating().then(result => {res.json(result)})
     } catch (error) {
         return res.status(500).json(error.message);
 
     }
 })
-//rank supplier
+
+//list rank supplier sesuai rating
+app.get("/supplier/rank", async (_,res) => {
+    try {
+        return rank().then(result => {res.json(result)})
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+})

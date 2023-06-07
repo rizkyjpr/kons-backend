@@ -128,12 +128,27 @@ const normalisasisupplier = async (id_supplier) => {
     });
 };
 
-//
-const bobotAkhir = async () => {
+const rating = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect()
-        client.query(`SELECT SUM(ahp.nilai * sup.nilai_normalisasi) FROM kriteria_supplier sup JOIN bobot_akhir ahp ON id_supplier`)
+        const data = await client.query(`SELECT sup.id_supplier id_supplier, SUM(ahp.nilai * sup.nilai_normalisasi) rating FROM kriteria_supplier sup JOIN bobot_akhir ahp ON ahp.id_kriteria = sup.id_kriteria GROUP BY sup.id_supplier`)
+        for(var i = 0; i < data.rowCount; i++){
+            client.query(`UPDATE supplier SET rating = '${data.rows[i].rating}' WHERE id = '${data.rows[i].id_supplier}'`)
+        }
+        resolve({status:202, message:"deletion-was-successful"})
+    })
+}
+
+const rank = async() => {
+    return new Promise(async (resolve, reject) => {
+        const client = newClient();
+        client.connect();
+        client.query(`SELECT nama, rating FROM supplier ORDER BY rating`,
+                        (err,result) => {
+                            if(err) reject(err)
+                            resolve(result.rows)
+                        })
     })
 }
 
@@ -144,4 +159,6 @@ module.exports = {
     deletesupplier,
     updatesupplier,
     normalisasisupplier,
+    rating,
+    rank
 };
