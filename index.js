@@ -140,7 +140,7 @@ app.get("/kriteria/cr", async (_, res) => {
 });
 
 //add supplier
-app.post("/supplier/add", async (req, res) => {
+app.post("/supplier", async (req, res) => {
     try {
         return addsupplier(req.body).then((result) => {
             res.json(result);
