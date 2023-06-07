@@ -118,6 +118,8 @@ const normalisasisupplier = async () => {
                       (min_max.rows[i].max - min_max.rows[i].min);
             await client.query(`UPDATE kriteria_supplier SET nilai_normalisasi = '${normalisasi}' WHERE id = '${data.rows[0].id}'`);
         }
+        const result = await client.query(`SELECT id_kriteria, id_supplier, nilai_normalisasi`)
+        resolve(result.rows)
     });
 };
 
@@ -125,7 +127,7 @@ const bobotAkhir = async () => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
         client.connect()
-        client.query()
+        client.query(``)
     })
 }
 
