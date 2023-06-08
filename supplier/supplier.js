@@ -141,7 +141,7 @@ const normalisasisupplier = async (id_supplier) => {
 //     id_kriteria: [id1,id2,id3]
 // }
 
-// 
+//
 const rating = async (idsup) => {
     return new Promise(async (resolve, reject) => {
         const client = newClient();
@@ -169,7 +169,7 @@ const rank = async (id) => {
         const client = newClient();
         client.connect();
         client.query(
-            `SELECT nama, rating FROM supplier WHERE id IN(${id}) ORDER BY rating DESC`,
+            `SELECT name, rating FROM supplier WHERE id IN(${id}) ORDER BY rating DESC`,
             (err, result) => {
                 if (err) reject(err);
                 resolve(result.rows);
