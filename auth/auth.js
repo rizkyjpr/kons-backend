@@ -36,11 +36,11 @@ const login = async (user) => {
                     result.rows[0].password
                 );
 
-                if (match) {
-                    resolve(result.rows[0]);
+                if (!match) {
+                    reject({ message: "incorrect-password" });
                 }
-
-                reject({ message: "incorrect-password" });
+                
+                resolve(result.rows[0]);
                 client.end();
             }
         );
