@@ -44,6 +44,7 @@ app.get("/popop", async (_, res) => {});
 
 app.post("/register", async (req, res) => {
     try {
+        if(!(req.body.email||req.body.password)) return res.status(400).json({message:"request-not-fulfilled"})
         return register(req.body).then((result) => {
             res.json(result);
         });
@@ -54,6 +55,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     try {
+        if(!(req.body.email||req.body.password)) return res.status(400).json({message:"request-not-fulfilled"})
         return login(req.body).then((result) => {
             res.json(result);
         });
