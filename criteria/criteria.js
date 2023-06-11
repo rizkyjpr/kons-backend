@@ -77,27 +77,27 @@ const normalisasiKriteria = async (data) => {
 
         try {
             await q1.query(`DELETE FROM kriteria_supplier; DELETE FROM supplier;`)
-            // const arr1 = await q1.query(
-            //     `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
-            // );
+            const arr1 = await q1.query(
+                `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
+            );
             const arr2 = await q2.query(
                 `SELECT nilai FROM perbandingan_kriteria ORDER BY id_kriteria_2, id_kriteria_1`
             );
             var count = 0;
             var queries = [];
-            for (let i = 0; i < Math.sqrt(data); i++) {
+            for (let i = 0; i < arr1.rowCount; i++) {
                 const temp = arr2.rows.slice(
-                    (count / Math.sqrt(data)) * Math.sqrt(data),
-                    (count / Math.sqrt(data)) * Math.sqrt(data) + Math.sqrt(data)
+                    (count / arr1.rowCount) * arr1.rowCount,
+                    (count / arr1.rowCount) * arr1.rowCount + arr1.rowCount
                 );
                 let result = 0;
                 temp.forEach((num) => {
                     result += num.nilai;
                 });
-                for (let j = 0; j < Math.sqrt(data); j++) {
+                for (let j = 0; j < arr1.rowCount; j++) {
                     queries.push(
                         `UPDATE perbandingan_kriteria SET nilai_normalisasi = '${
-                            arr2.rows[j + i * Math.sqrt(data)].nilai / result
+                            arr2.rows[j + i * arr1.rowCount].nilai / result
                         }'
              WHERE id_kriteria_1 = '${
                  arr1.rows[j].id_kriteria_1
