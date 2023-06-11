@@ -20,32 +20,34 @@ const register = async (user) => {
 
 const login = async (user) => {
     return new Promise(async (resolve, reject) => {
-        const client = newClient();
-        client.connect();
-        client.query(
-            `SELECT * FROM public.user WHERE email='${user.email}'`,
-            async (err, result) => {
-                if (err) reject(err);
-
-                if (!result.rowCount) {
-                    reject({ message: "email-not-found" });
-                }
-
-                const match = await bcrypt.compareSync(
-                    user.password,
-                    result.rows[0].password
-                );
-
-                if (!match) {
-                    reject({ message: "incorrect-password" });
-                }
-                
+      const client = newClient();
+      client.connect();
+      client.query(
+        `SELECT * FROM public.user WHERE email='${user.email}'`,
+        async (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (result.rowCount === 0) {
+              reject({ message: "email-not-found" });
+            } else {
+              const match = await bcrypt.compareSync(
+                user.password,
+                result.rows[0].password
+              );
+              if (!match) {
+                reject({ message: "incorrect-password" });
+              } else {
                 resolve(result.rows[0]);
-                client.end();
+              }
             }
-        );
+          }
+          client.end();
+        }
+      );
     });
-};
+  };
+  
 
 module.exports = {
     register,
