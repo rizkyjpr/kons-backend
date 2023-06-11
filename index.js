@@ -101,9 +101,9 @@ app.post("/kriteria/perbandingan", async (req, res) => {
 });
 
 //hitung normalisasi perbandingan kriteria
-app.get("/kriteria/normalisasi", async (_, res) => {
+app.get("/kriteria/normalisasi", async (req, res) => {
     try {
-        return normalisasiKriteria().then((result) => res.json(result));
+        return normalisasiKriteria(req.body).then((result) => res.json(result));
     } catch (error) {
         return res.status(500).json(error.message);
     }
