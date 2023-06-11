@@ -76,7 +76,7 @@ const normalisasiKriteria = async (data) => {
         q2.connect();
 
         try {
-            await q1.query(`DELETE FROM kriteria_supplier`)
+            await q1.query(`DELETE FROM kriteria_supplier; DELETE FROM supplier;`)
             const arr1 = await q1.query(
                 `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
             );
