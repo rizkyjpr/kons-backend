@@ -27,7 +27,7 @@ const login = async (user) => {
             async (err, result) => {
                 if (err) reject(err);
 
-                if (!result.rows[0].email) {
+                if (!result.rowCount) {
                     reject({ message: "email-not-found" });
                 }
 
