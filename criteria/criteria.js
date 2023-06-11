@@ -68,7 +68,7 @@ const insertPerbandingan = async (data) => {
     });
 };
 
-const normalisasiKriteria = async () => {
+const normalisasiKriteria = async (data) => {
     return new Promise(async (resolve, reject) => {
         const q1 = newClient();
         const q2 = newClient();
@@ -76,6 +76,7 @@ const normalisasiKriteria = async () => {
         q2.connect();
 
         try {
+            await q1.query(`DELETE FROM kriteria_supplier`)
             const arr1 = await q1.query(
                 `SELECT DISTINCT id_kriteria_1 FROM perbandingan_kriteria ORDER BY id_kriteria_1`
             );
