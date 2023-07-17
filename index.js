@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+require('dotenv').config()
 const { register, login } = require("./auth/auth");
 const {
     add_criteria,
@@ -29,7 +30,7 @@ const { rank } = require("./supplier/supplier");
 app.use(express.json());
 app.use(cors());
 
-app.listen(8080, () => {
+app.listen(process.env.APP_PORT, () => {
     console.log("works");
 });
 
