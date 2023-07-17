@@ -27,6 +27,7 @@ const { getSupplierById } = require("./supplier/supplier");
 const { rating } = require("./supplier/supplier");
 const { rank } = require("./supplier/supplier");
 
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
