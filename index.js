@@ -30,7 +30,7 @@ const { rank } = require("./supplier/supplier");
 app.use(express.json());
 app.use(cors());
 
-app.listen(process.env.APP_PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log("works");
 });
 
